@@ -1,0 +1,65 @@
+#! /bin/sh
+
+wmname LG3D &
+vmware-user-suid-wrapper &
+
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+
+
+if xrandr -q | grep "VIRTUAL1 connected"; then
+    xrandr --output eDP1 --primary --mode 1366x768 --output VIRTUAL1 --mode 1366x768 --left-of eDP1
+
+    bspc monitor eDP1 -n monitor0 
+    bspc monitor VIRTUAL1 -n monitor1
+    bspc monitor monitor0 -d I II III IV V VI VII VIII
+    bspc monitor monitor1 -d IX X
+
+    bspc wm -O "eDP1" "VIRTUAL1"
+    bspc monitor monitor0 -s monitor1
+#    notify-send "Dos monitores conectados"
+
+else
+#    notify-send "Un solo monitor Conectado"
+    bspc monitor eDP1 -n monitor0 -d I II III IV V VI VII VIII IX X
+
+fi
+
+
+bspc config border_width         2
+bspc config window_gap           8
+
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+#bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^10'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
+bspc rule -a Deskreen desktop='^8'
+
+# RESOLUCION ARANDR
+
+
+# WALLPAPER
+#feh --bg-fill ~/.config/Wallpaper/wall-02.png
+feh --bg-fill ~/.config/Wallpaper/wall-02.png
+
+
+# POLYBAR
+pkill polybar
+~/.config/polybar/launch.sh
+
+# CUSTOM
+bspc config focus_follows_pointer false
+
+# PICOM
+picom &
+bspc config border_width 2
+
+bspc config active_border_color "#a486dd"
+bspc config normal_border_color "#a486dd"
+
+xsetroot -cursor_name left_ptr &
